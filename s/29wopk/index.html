@@ -1,0 +1,1291 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>HBM 市场与技术研究简报</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@300;400;500;600;700&family=Newsreader:opsz,wght@6..72,300;6..72,500;6..72,700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ink: #151611;
+      --ink-soft: #3f3c33;
+      --paper: #f4efe4;
+      --paper-deep: #e8dfcf;
+      --panel: #fffaf0;
+      --line: #27251f;
+      --line-soft: rgba(39, 37, 31, 0.18);
+      --copper: #b95f2f;
+      --copper-dark: #81411f;
+      --teal: #087f89;
+      --teal-dark: #075c63;
+      --acid: #d7e65f;
+      --red: #b8362f;
+      --blue: #2b5f86;
+      --shadow: 0 22px 60px rgba(21, 22, 17, 0.12);
+      --radius: 8px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      font-family: "IBM Plex Sans", sans-serif;
+      background:
+        linear-gradient(90deg, rgba(8, 127, 137, 0.12) 1px, transparent 1px),
+        linear-gradient(180deg, rgba(185, 95, 47, 0.1) 1px, transparent 1px),
+        linear-gradient(135deg, #f7f2e8 0%, #eee3d2 46%, #f3efe3 100%);
+      background-size: 58px 58px, 58px 58px, auto;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0.22;
+      background-image:
+        repeating-linear-gradient(0deg, rgba(21, 22, 17, 0.07) 0 1px, transparent 1px 5px),
+        repeating-linear-gradient(90deg, rgba(255, 250, 240, 0.32) 0 1px, transparent 1px 7px);
+      mix-blend-mode: multiply;
+      z-index: -1;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .progress {
+      position: fixed;
+      inset: 0 auto auto 0;
+      height: 4px;
+      width: 0;
+      background: linear-gradient(90deg, var(--copper), var(--teal), var(--acid));
+      z-index: 50;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      padding: 14px clamp(18px, 4vw, 54px);
+      border-bottom: 1px solid var(--line);
+      background: rgba(244, 239, 228, 0.88);
+      backdrop-filter: blur(18px);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0;
+      text-transform: uppercase;
+    }
+
+    .brand-mark {
+      width: 26px;
+      height: 26px;
+      border: 2px solid var(--line);
+      background:
+        linear-gradient(90deg, transparent 45%, var(--line) 45% 55%, transparent 55%),
+        linear-gradient(0deg, transparent 45%, var(--line) 45% 55%, transparent 55%),
+        var(--acid);
+      box-shadow: 4px 4px 0 var(--line);
+      flex: 0 0 auto;
+    }
+
+    nav {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    nav a {
+      border: 1px solid var(--line-soft);
+      border-radius: 999px;
+      padding: 7px 11px;
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 12px;
+      line-height: 1;
+      background: rgba(255, 250, 240, 0.56);
+    }
+
+    nav a:hover,
+    nav a.active {
+      background: var(--ink);
+      color: var(--paper);
+      border-color: var(--ink);
+    }
+
+    main {
+      width: 100%;
+    }
+
+    .section {
+      padding: clamp(46px, 8vw, 96px) clamp(18px, 4vw, 54px);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .section-inner {
+      width: min(1220px, 100%);
+      margin: 0 auto;
+    }
+
+    .hero {
+      min-height: 86svh;
+      display: grid;
+      align-items: center;
+      padding-top: clamp(38px, 6vw, 76px);
+      padding-bottom: clamp(34px, 6vw, 72px);
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.05fr) minmax(340px, 0.95fr);
+      gap: clamp(24px, 5vw, 72px);
+      align-items: center;
+    }
+
+    .kicker {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      width: fit-content;
+      border: 1px solid var(--line);
+      background: var(--panel);
+      padding: 8px 10px;
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 12px;
+      font-weight: 700;
+      box-shadow: 5px 5px 0 var(--line);
+      margin-bottom: 24px;
+    }
+
+    .kicker span {
+      width: 9px;
+      height: 9px;
+      background: var(--red);
+      display: inline-block;
+    }
+
+    h1 {
+      margin: 0;
+      font-family: "Newsreader", serif;
+      font-size: clamp(48px, 8vw, 106px);
+      line-height: 0.9;
+      letter-spacing: 0;
+      font-weight: 700;
+      max-width: 860px;
+    }
+
+    .lead {
+      margin: 26px 0 0;
+      max-width: 760px;
+      color: var(--ink-soft);
+      font-size: clamp(18px, 2.2vw, 25px);
+      line-height: 1.45;
+      font-weight: 400;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 30px;
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      min-height: 42px;
+      padding: 10px 14px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--ink);
+      color: var(--paper);
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 13px;
+      font-weight: 700;
+      box-shadow: 5px 5px 0 var(--copper);
+      transition: transform 180ms ease, box-shadow 180ms ease;
+    }
+
+    .button.secondary {
+      background: var(--panel);
+      color: var(--ink);
+      box-shadow: 5px 5px 0 var(--teal);
+    }
+
+    .button:hover {
+      transform: translate(-2px, -2px);
+      box-shadow: 8px 8px 0 var(--line);
+    }
+
+    .metric-board {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      align-self: stretch;
+    }
+
+    .metric-card {
+      min-height: 154px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--panel);
+      padding: 18px;
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow: hidden;
+      position: relative;
+      opacity: 0;
+      transform: translateY(18px);
+      animation: enter 620ms ease forwards;
+    }
+
+    .metric-card:nth-child(2) { animation-delay: 90ms; }
+    .metric-card:nth-child(3) { animation-delay: 180ms; }
+    .metric-card:nth-child(4) { animation-delay: 270ms; }
+
+    .metric-card::after {
+      content: "";
+      position: absolute;
+      right: -28px;
+      bottom: -38px;
+      width: 104px;
+      height: 104px;
+      border: 16px solid rgba(8, 127, 137, 0.13);
+      transform: rotate(14deg);
+    }
+
+    .metric-label {
+      font-family: "IBM Plex Mono", monospace;
+      color: var(--ink-soft);
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      position: relative;
+      z-index: 1;
+    }
+
+    .metric-value {
+      margin-top: 20px;
+      font-family: "Newsreader", serif;
+      font-weight: 700;
+      line-height: 0.95;
+      font-size: clamp(34px, 4vw, 56px);
+      position: relative;
+      z-index: 1;
+    }
+
+    .metric-note {
+      margin-top: 10px;
+      color: var(--ink-soft);
+      font-size: 13px;
+      line-height: 1.35;
+      position: relative;
+      z-index: 1;
+    }
+
+    .chapter-head {
+      display: grid;
+      grid-template-columns: minmax(0, 0.78fr) minmax(280px, 0.22fr);
+      gap: 24px;
+      align-items: end;
+      margin-bottom: 32px;
+    }
+
+    .eyebrow {
+      margin: 0 0 12px;
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--copper-dark);
+      text-transform: uppercase;
+    }
+
+    h2 {
+      margin: 0;
+      font-family: "Newsreader", serif;
+      font-size: clamp(38px, 5vw, 70px);
+      line-height: 0.98;
+      letter-spacing: 0;
+    }
+
+    .chapter-note {
+      margin: 0;
+      color: var(--ink-soft);
+      line-height: 1.55;
+      font-size: 16px;
+    }
+
+    .market-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 0.95fr) minmax(320px, 1.05fr);
+      gap: 18px;
+      align-items: stretch;
+    }
+
+    .panel {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(255, 250, 240, 0.9);
+      padding: clamp(18px, 3vw, 28px);
+      box-shadow: var(--shadow);
+    }
+
+    .panel.dark {
+      background: var(--ink);
+      color: var(--paper);
+      box-shadow: 10px 10px 0 var(--copper);
+    }
+
+    .panel h3,
+    .signal h3,
+    .source-card h3 {
+      margin: 0 0 16px;
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 14px;
+      line-height: 1.25;
+      text-transform: uppercase;
+    }
+
+    .finding-list {
+      display: grid;
+      gap: 16px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .finding-list li {
+      display: grid;
+      grid-template-columns: 34px minmax(0, 1fr);
+      gap: 14px;
+      align-items: start;
+      line-height: 1.55;
+      color: var(--ink-soft);
+    }
+
+    .panel.dark .finding-list li {
+      color: rgba(244, 239, 228, 0.82);
+    }
+
+    .number {
+      width: 34px;
+      height: 34px;
+      display: grid;
+      place-items: center;
+      border: 1px solid currentColor;
+      border-radius: 50%;
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--copper);
+    }
+
+    .tam-chart {
+      display: grid;
+      gap: 24px;
+    }
+
+    .tam-range {
+      position: relative;
+      min-height: 230px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background:
+        repeating-linear-gradient(90deg, rgba(21, 22, 17, 0.07) 0 1px, transparent 1px 10%),
+        var(--paper);
+      padding: 20px;
+      overflow: hidden;
+    }
+
+    .tam-axis {
+      position: absolute;
+      left: 20px;
+      right: 20px;
+      bottom: 34px;
+      height: 2px;
+      background: var(--line);
+    }
+
+    .tam-bar {
+      position: absolute;
+      left: 38%;
+      right: 10%;
+      bottom: 70px;
+      height: 54px;
+      background: linear-gradient(90deg, var(--copper), var(--teal));
+      border: 1px solid var(--line);
+      box-shadow: 8px 8px 0 rgba(21, 22, 17, 0.16);
+    }
+
+    .tam-pin {
+      position: absolute;
+      bottom: 130px;
+      transform: translateX(-50%);
+      display: grid;
+      gap: 5px;
+      font-family: "IBM Plex Mono", monospace;
+      font-weight: 700;
+      font-size: 12px;
+    }
+
+    .tam-pin::after {
+      content: "";
+      width: 1px;
+      height: 58px;
+      background: var(--line);
+      justify-self: center;
+    }
+
+    .tam-pin.low {
+      left: 38%;
+    }
+
+    .tam-pin.high {
+      left: 90%;
+      text-align: right;
+    }
+
+    .tam-caption {
+      position: absolute;
+      left: 20px;
+      top: 20px;
+      max-width: 390px;
+      margin: 0;
+      font-size: clamp(28px, 4vw, 48px);
+      line-height: 0.98;
+      font-family: "Newsreader", serif;
+      font-weight: 700;
+    }
+
+    .tam-caption span {
+      color: var(--copper-dark);
+    }
+
+    .small-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .mini-stat {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 14px;
+      background: var(--panel);
+    }
+
+    .mini-stat strong {
+      display: block;
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 13px;
+      margin-bottom: 8px;
+    }
+
+    .mini-stat span {
+      display: block;
+      color: var(--ink-soft);
+      font-size: 14px;
+      line-height: 1.45;
+    }
+
+    .tech-grid {
+      display: grid;
+      grid-template-columns: minmax(320px, 0.82fr) minmax(0, 1.18fr);
+      gap: 18px;
+      align-items: stretch;
+    }
+
+    .stack-diagram {
+      display: grid;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .die {
+      position: relative;
+      min-height: 32px;
+      border: 1px solid var(--line);
+      background: var(--paper);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 12px;
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .die::before,
+    .die::after {
+      content: "";
+      width: 7px;
+      height: 100%;
+      background:
+        linear-gradient(var(--teal), var(--teal)) center / 2px 100% no-repeat,
+        transparent;
+      opacity: 0.8;
+    }
+
+    .die.base {
+      min-height: 46px;
+      background: var(--acid);
+    }
+
+    .die.gpu {
+      min-height: 66px;
+      background: var(--ink);
+      color: var(--paper);
+      margin-top: 14px;
+      justify-content: center;
+    }
+
+    .interposer {
+      min-height: 22px;
+      border: 1px solid var(--line);
+      background:
+        repeating-linear-gradient(90deg, rgba(21, 22, 17, 0.28) 0 2px, transparent 2px 12px),
+        var(--copper);
+      margin: 8px 0 2px;
+    }
+
+    .diagram-label {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      margin-top: 12px;
+      color: var(--ink-soft);
+      font-size: 13px;
+      line-height: 1.35;
+    }
+
+    .ladder {
+      display: grid;
+      gap: 15px;
+      margin-top: 6px;
+    }
+
+    .ladder-row {
+      display: grid;
+      grid-template-columns: 82px minmax(0, 1fr) 92px;
+      align-items: center;
+      gap: 12px;
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .bar-track {
+      height: 30px;
+      border: 1px solid var(--line);
+      background: rgba(21, 22, 17, 0.06);
+      overflow: hidden;
+    }
+
+    .bar-fill {
+      height: 100%;
+      border-right: 1px solid var(--line);
+      background:
+        linear-gradient(90deg, rgba(255, 250, 240, 0.24), transparent),
+        var(--teal);
+    }
+
+    .bar-fill.copper {
+      background:
+        linear-gradient(90deg, rgba(255, 250, 240, 0.24), transparent),
+        var(--copper);
+    }
+
+    .bar-fill.red {
+      background:
+        linear-gradient(90deg, rgba(255, 250, 240, 0.24), transparent),
+        var(--red);
+    }
+
+    .roadmap {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .roadmap-item {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--panel);
+      padding: 16px;
+      min-height: 160px;
+    }
+
+    .roadmap-item strong {
+      display: block;
+      font-family: "Newsreader", serif;
+      font-size: 30px;
+      line-height: 1;
+      margin-bottom: 12px;
+    }
+
+    .roadmap-item span {
+      display: block;
+      color: var(--ink-soft);
+      font-size: 14px;
+      line-height: 1.45;
+    }
+
+    .supplier-grid {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr 0.9fr;
+      gap: 14px;
+    }
+
+    .supplier {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--panel);
+      min-height: 310px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      box-shadow: 8px 8px 0 rgba(21, 22, 17, 0.12);
+    }
+
+    .supplier.featured {
+      background: var(--ink);
+      color: var(--paper);
+      box-shadow: 10px 10px 0 var(--teal);
+    }
+
+    .supplier h3 {
+      margin: 0;
+      font-family: "Newsreader", serif;
+      font-size: clamp(34px, 4vw, 52px);
+      line-height: 0.95;
+    }
+
+    .supplier p {
+      color: var(--ink-soft);
+      line-height: 1.55;
+      margin: 18px 0;
+    }
+
+    .supplier.featured p {
+      color: rgba(244, 239, 228, 0.82);
+    }
+
+    .tag-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .tag {
+      border: 1px solid currentColor;
+      border-radius: 999px;
+      padding: 6px 9px;
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .bottleneck-strip {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 0;
+      border: 1px solid var(--line);
+      background: var(--panel);
+    }
+
+    .bottleneck {
+      min-height: 160px;
+      padding: 18px;
+      border-right: 1px solid var(--line);
+    }
+
+    .bottleneck:last-child {
+      border-right: 0;
+    }
+
+    .bottleneck strong {
+      display: block;
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 13px;
+      margin-bottom: 12px;
+      text-transform: uppercase;
+    }
+
+    .bottleneck span {
+      color: var(--ink-soft);
+      line-height: 1.45;
+      font-size: 14px;
+    }
+
+    .watch-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .signal {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 22px;
+      min-height: 180px;
+      background: var(--panel);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .signal::before {
+      content: attr(data-index);
+      position: absolute;
+      right: 16px;
+      bottom: 8px;
+      font-family: "Newsreader", serif;
+      font-size: 90px;
+      font-weight: 700;
+      color: rgba(21, 22, 17, 0.08);
+      line-height: 1;
+    }
+
+    .signal p {
+      margin: 0;
+      color: var(--ink-soft);
+      line-height: 1.55;
+      max-width: 560px;
+      position: relative;
+    }
+
+    .source-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .source-card {
+      display: block;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--panel);
+      padding: 16px;
+      min-height: 150px;
+      transition: transform 180ms ease, box-shadow 180ms ease;
+    }
+
+    .source-card:hover {
+      transform: translate(-2px, -2px);
+      box-shadow: 7px 7px 0 var(--line);
+    }
+
+    .source-card p {
+      margin: 0;
+      color: var(--ink-soft);
+      font-size: 14px;
+      line-height: 1.45;
+      overflow-wrap: anywhere;
+    }
+
+    .footer {
+      display: flex;
+      justify-content: space-between;
+      gap: 18px;
+      align-items: center;
+      flex-wrap: wrap;
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 12px;
+      color: var(--ink-soft);
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(22px);
+      transition: opacity 680ms ease, transform 680ms ease;
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @keyframes enter {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (max-width: 980px) {
+      .hero-grid,
+      .market-layout,
+      .tech-grid,
+      .chapter-head {
+        grid-template-columns: 1fr;
+      }
+
+      .hero {
+        min-height: auto;
+      }
+
+      .supplier-grid,
+      .source-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .bottleneck-strip {
+        grid-template-columns: 1fr;
+      }
+
+      .bottleneck {
+        border-right: 0;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .bottleneck:last-child {
+        border-bottom: 0;
+      }
+
+      .roadmap {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 720px) {
+      .topbar {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      nav {
+        justify-content: flex-start;
+      }
+
+      .metric-board,
+      .small-grid,
+      .watch-grid,
+      .roadmap {
+        grid-template-columns: 1fr;
+      }
+
+      .tam-caption {
+        position: relative;
+        left: auto;
+        top: auto;
+        max-width: none;
+        margin-bottom: 32px;
+      }
+
+      .tam-range {
+        min-height: 300px;
+      }
+
+      .tam-bar {
+        left: 24%;
+        right: 8%;
+      }
+
+      .tam-pin.low {
+        left: 24%;
+      }
+
+      .tam-pin.high {
+        left: 92%;
+      }
+
+      .ladder-row {
+        grid-template-columns: 74px minmax(0, 1fr);
+      }
+
+      .ladder-row > span:last-child {
+        grid-column: 2;
+        color: var(--ink-soft);
+      }
+
+      h1 {
+        font-size: clamp(48px, 15vw, 78px);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="progress" id="progress"></div>
+  <header class="topbar">
+    <a class="brand" href="#top" aria-label="回到顶部">
+      <span class="brand-mark" aria-hidden="true"></span>
+      <span>HBM Research / 2026</span>
+    </a>
+    <nav aria-label="页面导航">
+      <a href="#market">市场</a>
+      <a href="#tech">技术</a>
+      <a href="#supply">供应链</a>
+      <a href="#watch">观察指标</a>
+      <a href="#sources">来源</a>
+    </nav>
+  </header>
+
+  <main id="top">
+    <section class="section hero">
+      <div class="section-inner hero-grid">
+        <div>
+          <div class="kicker"><span></span>截至 2026-05-21</div>
+          <h1>HBM 市场与技术研究简报</h1>
+          <p class="lead">HBM 正从 AI 训练的高端内存，变成推理吞吐、长上下文和自研 ASIC 的关键瓶颈。2026 年的主线不是单一代际替换，而是 HBM3E 放量、HBM4 验证、先进封装爬坡同时发生。</p>
+          <div class="hero-actions">
+            <a class="button" href="#market">进入研究</a>
+            <a class="button secondary" href="#sources">查看来源</a>
+          </div>
+        </div>
+
+        <div class="metric-board" aria-label="关键指标">
+          <article class="metric-card">
+            <div class="metric-label">2026 HBM TAM</div>
+            <div>
+              <div class="metric-value">$45B-55B</div>
+              <div class="metric-note">分析师口径集中在 450-550 亿美元区间。</div>
+            </div>
+          </article>
+          <article class="metric-card">
+            <div class="metric-label">HBM4 stack bandwidth</div>
+            <div>
+              <div class="metric-value">2.8-3.3TB/s</div>
+              <div class="metric-note">厂商产品宣称值已高于 JEDEC 基准。</div>
+            </div>
+          </article>
+          <article class="metric-card">
+            <div class="metric-label">HBM3E mainstream</div>
+            <div>
+              <div class="metric-value">2026</div>
+              <div class="metric-note">Blackwell Ultra 与 MI350 仍主要依赖 HBM3E。</div>
+            </div>
+          </article>
+          <article class="metric-card">
+            <div class="metric-label">True bottleneck</div>
+            <div>
+              <div class="metric-value">封装</div>
+              <div class="metric-note">TSV、堆叠良率、CoWoS 和客户验证共同限制出货。</div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="market">
+      <div class="section-inner">
+        <div class="chapter-head reveal">
+          <div>
+            <p class="eyebrow">01 / Market</p>
+            <h2>市场不是缺 DRAM，而是缺合格 HBM 系统件</h2>
+          </div>
+          <p class="chapter-note">HBM 的定价权来自 AI 加速器对本地带宽、容量和功耗的同时要求。传统 DRAM 周期仍重要，但 HBM 已经成为 memory supercycle 中最稀缺的高端切片。</p>
+        </div>
+
+        <div class="market-layout">
+          <article class="panel dark reveal">
+            <h3>核心判断</h3>
+            <ol class="finding-list">
+              <li><span class="number">1</span><span>2026 年 HBM TAM 大概率落在 450-550 亿美元区间，取决于 Blackwell Ultra、Rubin 预备量、AMD MI350 和 ASIC 客户的放量节奏。</span></li>
+              <li><span class="number">2</span><span>HBM3E 仍是收入主力；HBM4 的重要性在于验证窗口、产品溢价和 2027 年 HBM4E/custom HBM 的先发位置。</span></li>
+              <li><span class="number">3</span><span>如果普通 DRAM 因供给挤压继续涨价，HBM 厂商会在高端 DRAM、server DRAM、HBM 间重新分配产能。</span></li>
+            </ol>
+          </article>
+
+          <div class="tam-chart reveal">
+            <div class="tam-range" aria-label="2026 HBM TAM 估计区间图">
+              <p class="tam-caption">2026 HBM 市场约 <span>450-550 亿美元</span></p>
+              <div class="tam-pin low">$45B<br>Goldman/TrendForce</div>
+              <div class="tam-pin high">$54.6B<br>BofA</div>
+              <div class="tam-bar"></div>
+              <div class="tam-axis"></div>
+            </div>
+
+            <div class="small-grid">
+              <div class="mini-stat"><strong>AI 半导体</strong><span>Gartner 预计 2026 年约占全球半导体收入 30%。</span></div>
+              <div class="mini-stat"><strong>Memory cycle</strong><span>Omdia 指出 2025 年 DRAM 收入已超过 1500 亿美元。</span></div>
+              <div class="mini-stat"><strong>Pricing</strong><span>HBM 高端产品有溢价，成熟 HBM3E 可能承受 ASP 压力。</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="tech">
+      <div class="section-inner">
+        <div class="chapter-head reveal">
+          <div>
+            <p class="eyebrow">02 / Technology</p>
+            <h2>HBM 的技术价值是把带宽贴近计算</h2>
+          </div>
+          <p class="chapter-note">HBM 不是 DDR 的线性升级。它通过 3D 堆叠、TSV、base die 和 2.5D 封装，把 DRAM 放到 GPU/ASIC 旁边，用宽总线换取 TB/s 级带宽和更低每 bit 能耗。</p>
+        </div>
+
+        <div class="tech-grid">
+          <article class="panel reveal">
+            <h3>HBM stack anatomy</h3>
+            <div class="stack-diagram" aria-label="HBM 堆叠结构示意">
+              <div class="die">DRAM die 12/16-hi <span>TSV</span></div>
+              <div class="die">DRAM die <span>micro bump</span></div>
+              <div class="die">DRAM die <span>thermal path</span></div>
+              <div class="die base">Logic base die <span>PHY / test</span></div>
+              <div class="interposer" aria-hidden="true"></div>
+              <div class="die gpu">GPU / AI ASIC on 2.5D interposer</div>
+            </div>
+            <div class="diagram-label">
+              <span>垂直方向解决容量和距离</span>
+              <span>水平方向解决 GPU 到 HBM 的超宽互连</span>
+            </div>
+          </article>
+
+          <article class="panel reveal">
+            <h3>Bandwidth ladder</h3>
+            <div class="ladder" aria-label="HBM 带宽代际阶梯">
+              <div class="ladder-row">
+                <span>HBM3E</span>
+                <div class="bar-track"><div class="bar-fill copper" style="width: 38%"></div></div>
+                <span>1.2TB/s+</span>
+              </div>
+              <div class="ladder-row">
+                <span>JEDEC HBM4</span>
+                <div class="bar-track"><div class="bar-fill" style="width: 62%"></div></div>
+                <span>2.0TB/s</span>
+              </div>
+              <div class="ladder-row">
+                <span>Micron HBM4</span>
+                <div class="bar-track"><div class="bar-fill" style="width: 86%"></div></div>
+                <span>2.8TB/s+</span>
+              </div>
+              <div class="ladder-row">
+                <span>Samsung HBM4</span>
+                <div class="bar-track"><div class="bar-fill red" style="width: 100%"></div></div>
+                <span>3.3TB/s</span>
+              </div>
+            </div>
+
+            <div class="roadmap">
+              <div class="roadmap-item"><strong>HBM3E</strong><span>1024-bit I/O，8/12-hi，2026 收入主力。</span></div>
+              <div class="roadmap-item"><strong>HBM4</strong><span>2048-bit I/O，12/16-hi，开始客户验证和量产爬坡。</span></div>
+              <div class="roadmap-item"><strong>HBM4E</strong><span>更高速度、更深客户定制，预计成为 2027 主线。</span></div>
+              <div class="roadmap-item"><strong>Custom</strong><span>base die 与 GPU/ASIC 协同设计，供应商分化加剧。</span></div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="supply">
+      <div class="section-inner">
+        <div class="chapter-head reveal">
+          <div>
+            <p class="eyebrow">03 / Supply chain</p>
+            <h2>三大厂竞争，胜负在量产质量和客户验证</h2>
+          </div>
+          <p class="chapter-note">HBM 的供应链不像普通 DRAM 那样只看 bit output。AI 客户需要稳定的整栈良率、热表现、功耗曲线和封装协同，任何一项掉链都会影响 GPU 或 ASIC 出货。</p>
+        </div>
+
+        <div class="supplier-grid reveal">
+          <article class="supplier featured">
+            <div>
+              <h3>SK hynix</h3>
+              <p>现阶段 HBM 龙头。优势在 NVIDIA 关系、HBM3E 量产、MR-MUF 封装经验和高份额。关键问题是 HBM4/HBM4E 能否继续守住先发优势。</p>
+            </div>
+            <div class="tag-row">
+              <span class="tag">份额领先</span>
+              <span class="tag">HBM3E 强势</span>
+              <span class="tag">MR-MUF</span>
+            </div>
+          </article>
+
+          <article class="supplier">
+            <div>
+              <h3>Samsung</h3>
+              <p>2026 年最重要变量。HBM4 采用 1c DRAM 和 4nm logic base die，memory + foundry + packaging 一体化是优势，但量产稳定性和客户认证仍是关键。</p>
+            </div>
+            <div class="tag-row">
+              <span class="tag">HBM4 追赶</span>
+              <span class="tag">4nm base die</span>
+              <span class="tag">IDM</span>
+            </div>
+          </article>
+
+          <article class="supplier">
+            <div>
+              <h3>Micron</h3>
+              <p>份额较小，但 HBM3E/HBM4 产品指标积极。已宣布 HBM4 36GB 12H 量产出货，并向客户送样 48GB 16H。</p>
+            </div>
+            <div class="tag-row">
+              <span class="tag">产品指标强</span>
+              <span class="tag">36GB 12H</span>
+              <span class="tag">48GB 16H sample</span>
+            </div>
+          </article>
+        </div>
+
+        <div class="bottleneck-strip reveal" style="margin-top: 18px;">
+          <div class="bottleneck"><strong>TSV</strong><span>穿硅通孔密度、均匀性和可靠性决定堆叠良率。</span></div>
+          <div class="bottleneck"><strong>12/16-hi stack</strong><span>堆叠层数越高，翘曲、散热和已知良品 die 管理越难。</span></div>
+          <div class="bottleneck"><strong>Base die</strong><span>HBM4 后 logic base die 更像客户协同设计入口。</span></div>
+          <div class="bottleneck"><strong>2.5D package</strong><span>CoWoS/interposer 是 GPU 和 HBM 一起出货的硬上限之一。</span></div>
+          <div class="bottleneck"><strong>Qualification</strong><span>NVIDIA、AMD、ASIC 客户验证周期会造成份额阶跃变化。</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="watch">
+      <div class="section-inner">
+        <div class="chapter-head reveal">
+          <div>
+            <p class="eyebrow">04 / Watch list</p>
+            <h2>接下来 6-12 个月该看什么</h2>
+          </div>
+          <p class="chapter-note">HBM 的研究重点不只是规格表。真正有预测价值的是客户认证、封装分配、ASP 曲线和非 NVIDIA 需求的扩散。</p>
+        </div>
+
+        <div class="watch-grid">
+          <article class="signal reveal" data-index="01">
+            <h3>Rubin HBM4 验证节奏</h3>
+            <p>NVIDIA Rubin/Rubin Ultra 会决定 HBM4 首轮份额分配。谁先进供应链，谁就更可能在 HBM4E 和 custom HBM 里延续位置。</p>
+          </article>
+          <article class="signal reveal" data-index="02">
+            <h3>16-hi 良率</h3>
+            <p>16-hi 带来更高容量，但热、翘曲和堆叠良率压力更大。它是容量增长的关键，也是供应商分化的地方。</p>
+          </article>
+          <article class="signal reveal" data-index="03">
+            <h3>CoWoS allocation</h3>
+            <p>HBM 有货不等于 GPU 能出货。TSMC 先进封装、interposer 和系统级良率仍会约束 AI 加速器交付。</p>
+          </article>
+          <article class="signal reveal" data-index="04">
+            <h3>ASIC attach rate</h3>
+            <p>Google TPU、AWS Trainium、Broadcom/Marvell custom ASIC 的 HBM 用量，会决定市场是否摆脱对 NVIDIA 单一节奏的依赖。</p>
+          </article>
+          <article class="signal reveal" data-index="05">
+            <h3>HBM3E ASP</h3>
+            <p>成熟 HBM3E 供给改善后可能承压。若 HBM4 溢价不足，供应商盈利弹性会低于出货增速。</p>
+          </article>
+          <article class="signal reveal" data-index="06">
+            <h3>Custom HBM</h3>
+            <p>base die 与客户 ASIC 的协同设计，会把 HBM 从标准品推向平台型组件，长期提高切换成本。</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="sources">
+      <div class="section-inner">
+        <div class="chapter-head reveal">
+          <div>
+            <p class="eyebrow">05 / Sources</p>
+            <h2>主要来源</h2>
+          </div>
+          <p class="chapter-note">页面内容综合官方产品资料、行业机构预测和供应商公告。市场数字应按区间看，不宜当作精确单点预测。</p>
+        </div>
+
+        <div class="source-grid reveal">
+          <a class="source-card" href="https://www.gartner.com/en/newsroom/press-releases/2026-04-08-gartner-forecasts-worldwide-semiconductor-revenue-to-exceed-us-dollars-one-point-3-trillion-in-2026" target="_blank" rel="noreferrer">
+            <h3>Gartner</h3>
+            <p>2026 semiconductor revenue, memory revenue, AI semiconductor share.</p>
+          </a>
+          <a class="source-card" href="https://omdia.tech.informa.com/pr/2026/mar/semiconductor-market-surpasses-830bn-dollars-in-2025-driven-by-ai-demand-and-broad-segment-growth" target="_blank" rel="noreferrer">
+            <h3>Omdia</h3>
+            <p>2025 semiconductor market and DRAM recovery context.</p>
+          </a>
+          <a class="source-card" href="https://www.spglobal.com/market-intelligence/en/news-insights/articles/2026/4/ai-fueled-memory-chip-supercycle-to-reach-record-heights-in-2026-88052762" target="_blank" rel="noreferrer">
+            <h3>S&amp;P Global</h3>
+            <p>Memory supercycle, ASP pressure and supplier allocation dynamics.</p>
+          </a>
+          <a class="source-card" href="https://www.trendforce.com/presscenter/news/20260213-12929.html" target="_blank" rel="noreferrer">
+            <h3>TrendForce</h3>
+            <p>HBM4 validation and NVIDIA supply chain observations.</p>
+          </a>
+          <a class="source-card" href="https://news.skhynix.com/sk-hynix-completes-worlds-first-hbm4-development-and-readies-mass-production/" target="_blank" rel="noreferrer">
+            <h3>SK hynix</h3>
+            <p>HBM4 development, performance and power efficiency claims.</p>
+          </a>
+          <a class="source-card" href="https://news.samsungsemiconductor.com/global/samsung-ships-industry-first-commercial-hbm4-with-ultimate-performance-for-ai-computing/" target="_blank" rel="noreferrer">
+            <h3>Samsung</h3>
+            <p>HBM4 commercial shipment, 1c DRAM, 4nm logic base die and bandwidth.</p>
+          </a>
+          <a class="source-card" href="https://www.micron.com/products/memory/hbm/hbm4" target="_blank" rel="noreferrer">
+            <h3>Micron HBM4</h3>
+            <p>HBM4 12H/16H density and bandwidth product details.</p>
+          </a>
+          <a class="source-card" href="https://developer.nvidia.com/blog/inside-the-nvidia-rubin-platform-six-new-chips-one-ai-supercomputer/" target="_blank" rel="noreferrer">
+            <h3>NVIDIA Rubin</h3>
+            <p>Rubin platform, HBM4 capacity and bandwidth direction.</p>
+          </a>
+          <a class="source-card" href="https://www.amd.com/en/products/accelerators/instinct/mi350.html" target="_blank" rel="noreferrer">
+            <h3>AMD MI350</h3>
+            <p>MI350 HBM3E capacity and bandwidth positioning.</p>
+          </a>
+        </div>
+
+        <footer class="footer" style="margin-top: 36px;">
+          <span>HBM 市场与技术研究简报</span>
+          <span>Static page, no build step</span>
+        </footer>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const progress = document.querySelector("#progress");
+    const navLinks = Array.from(document.querySelectorAll("nav a"));
+    const sections = navLinks
+      .map((link) => document.querySelector(link.getAttribute("href")))
+      .filter(Boolean);
+
+    function updateProgress() {
+      const scrollTop = window.scrollY;
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const ratio = docHeight > 0 ? scrollTop / docHeight : 0;
+      progress.style.width = `${Math.min(100, Math.max(0, ratio * 100))}%`;
+
+      let activeId = "";
+      for (const section of sections) {
+        const top = section.offsetTop - 160;
+        if (scrollTop >= top) activeId = section.id;
+      }
+
+      navLinks.forEach((link) => {
+        link.classList.toggle("active", link.getAttribute("href") === `#${activeId}`);
+      });
+    }
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("visible");
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12 });
+
+    document.querySelectorAll(".reveal").forEach((item) => observer.observe(item));
+    window.addEventListener("scroll", updateProgress, { passive: true });
+    window.addEventListener("resize", updateProgress);
+    updateProgress();
+  </script>
+</body>
+</html>
